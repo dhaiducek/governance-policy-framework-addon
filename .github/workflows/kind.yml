@@ -79,6 +79,16 @@ jobs:
         export COVERAGE_E2E_OUT=coverage_e2e_hosted_mode.out
         make e2e-test-coverage
 
+    - name: Verify Deployment Configuration
+      run: |
+        make build-images
+        make kind-deploy-controller-dev
+
+    - name: Run E2E Uninstallation Tests
+      if: ${{ matrix.kind == 'latest' }}
+      run: |
+        make e2e-test-uninstall-coverage
+
     - name: Test Coverage and Report Generation
       if: ${{ matrix.kind == 'latest' }}
       run: |
@@ -107,11 +117,6 @@ jobs:
           governance-policy-framework-addon/coverage*.out
           governance-policy-framework-addon/event.json
           governance-policy-framework-addon/gosec.json
-
-    - name: Verify Deployment Configuration
-      run: |
-        make build-images
-        make kind-deploy-controller-dev
 
     - name: Debug
       if: ${{ failure() }}
